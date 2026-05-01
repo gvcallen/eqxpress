@@ -5,6 +5,7 @@ Exported at root.
 """
 
 from __future__ import annotations
+import operator
 from typing import Callable, Any, Union
 
 import jax
@@ -84,7 +85,7 @@ class Method(AbstractExpression[ExprInputs, ExprOutputs]):
         obj = args[0] 
         method_args = args[1:]
         
-        func = AbstractExpression.attrgetter(self.path)(obj)
+        func = operator.attrgetter(self.path)(obj)
         return func(*method_args, **kwargs)
 
 
@@ -93,8 +94,8 @@ class Map(AbstractExpression[ExprInputs, ExprOutputs]):
     Applies an arbitrary function to a single AbstractExpression's output.
     """
     fn: Callable[[Any], ExprOutputs]
-    AbstractExpression: Union[AbstractExpression[ExprInputs, Any], Any]
+    base_expression: Union[AbstractExpression[ExprInputs, Any], Any]
 
     def __call__(self, *args: ExprInputs.args, **kwargs: ExprInputs.kwargs) -> ExprOutputs:
-        val = self.AbstractExpression(*args, **kwargs) if isinstance(self.AbstractExpression, AbstractExpression) else self.AbstractExpression
+        val = self.base_expression(*args, **kwargs) if isinstance(self.base_expression, AbstractExpression) else self.base_expression
         return self.fn(val)

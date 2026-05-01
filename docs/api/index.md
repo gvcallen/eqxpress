@@ -2,6 +2,6 @@
 
 ::: eqxpress.AbstractExpression
 
-::: eqxpress.nodes
+::: eqxpress.primitives
 
 ::: eqxpress.algebra

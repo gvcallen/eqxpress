@@ -1,6 +1,6 @@
 [project]
 name = "eqxpress"
-version = "0.0.3"
+version = "0.0.4"
 description = "Composable expressions in JAX + Equinox"
 readme = "README.md"
 authors = [

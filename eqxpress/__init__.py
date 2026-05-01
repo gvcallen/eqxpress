@@ -6,7 +6,7 @@ except PackageNotFoundError:
     pass
 
 from eqxpress.base import AbstractExpression, ExprInputs, ExprOutputs
-from eqxpress.nodes import Lambda, Constant, Binary, Where, Method, Map
+from eqxpress.primitives import Lambda, Constant, Binary, Where, Method, Map
 from eqxpress.algebra import Stack, Index, Mask, Reduce, Sum, Negate, Derivative, Flatness, Diagonal, OffDiagonal
 
 __all__ = [

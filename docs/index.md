@@ -1,4 +1,6 @@
-**eqxpress** is a lightweight library for composing expressions over input-output space.
+**eqxpress** is a lightweight library for composing expressions over input-output PyTree spaces. It allows you to build deferred computation graphs and abstract syntax trees (ASTs) using standard Python operators.
+
+Since **eqxpress** is built natively on Equinox, each new instance of `AbstractExpression` is a new PyTree, and therefore any PyTree leaves (weights, arrays, parameters) are propagated throughout nested operations.
 
 | **eqxpress** |  |
 |-------------|-------|
@@ -7,29 +9,36 @@
 | **Docs** | [gvcallen.github.io/eqxpress](https://gvcallen.github.io/eqxpress) |
 
 ## Installation
-`eqxpress` can be installed via `pip`.
+`eqxpress` can be installed via `pip`:
 
 ``
 pip install eqxpress
 ``
 
-## Example
+## Example: Composing Modules
+
+If you have an existing hierarchy of Equinox modules with matching input/output signatures, simply inheriting from AbstractExpression grants them instant, declarative composition.
+
+A common use case is building composite loss functions for optimization:
 
 ```python
-class Scale(AbstractExpression):
-    def __call__(self, x): return {"data": x * 2.0}
+import jax.numpy as jnp
+from eqxpress import AbstractExpression
 
-class Shift(AbstractExpression):
-    def __call__(self, x): return {"data": x + 5.0}
+class MSELoss(AbstractExpression):
+    def __call__(self, y_true, y_pred):
+        return jnp.mean((y_true - y_pred) ** 2)
 
-# 1. Build the deferred computation graph
-# Mathematically defines h(x) = Scale(x) + 10 * Shift(x)
-h = Scale() + 10 * Shift()
+class L2Regularization(AbstractExpression):
+    def __call__(self, y_true, y_pred):
+        return jnp.sum(y_pred ** 2)
 
-# 2. Evaluate the combined mapping
-# Operations map point-wise over the dictionary keys automatically
-y = h(10.0) 
+# Build a deferred computation graph
+total_loss = MSELoss() + 0.01 * L2Regularization()
 
-# y == {"data": (10.0 * 2.0) + 10 * (10.0 + 5.0)} 
-# y == {"data": 170.0}
+# Evaluate the combined mapping
+y_t = jnp.array([1.0, 0.0])
+y_p = jnp.array([0.9, 0.1])
+
+loss_value = total_loss(y_true=y_t, y_pred=y_p)
 ```
