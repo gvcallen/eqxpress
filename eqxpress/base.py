@@ -72,63 +72,63 @@ class AbstractExpression(eqx.Module, Generic[ExprInputs, ExprOutputs]):
     # --- Arithmetic Operators ---
 
     def __add__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.add))
 
     def __sub__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.sub))
 
     def __mul__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.mul))
 
     def __truediv__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.truediv))
 
     def __pow__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.pow))
 
     # --- Unary Operators ---
     
     def __neg__(self) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.math import Negate
+        from eqxpress.algebra import Negate
         return Negate(self)
 
     # --- Reverse Arithmetic (for <scalar> + <Operator>) ---
 
     def __radd__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=other, right=self, fn=tree_op(operator.add))
 
     def __rsub__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=other, right=self, fn=tree_op(operator.sub))
 
     def __rmul__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=other, right=self, fn=tree_op(operator.mul))
         
     def __rtruediv__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=other, right=self, fn=tree_op(operator.truediv))
 
     # --- Comparison Operators ---
 
     def __gt__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.gt))
 
     def __lt__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.lt))
         
     def __ge__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.ge))
 
     def __le__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
-        from eqxpress.core import Binary
+        from eqxpress.nodes import Binary
         return Binary(left=self, right=other, fn=tree_op(operator.le))

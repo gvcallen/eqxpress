@@ -6,7 +6,7 @@ from typing import Any, Callable, Union
 import equinox as eqx
 
 from eqxpress.base import AbstractExpression, ExprInputs, ExprOutputs, tree_op
-from eqxpress.core import Map
+from eqxpress.nodes import Map
 
 class Stack(AbstractExpression[ExprInputs, ExprOutputs]):
     """Stacks the results of multiple operators along an axis."""
