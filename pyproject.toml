@@ -1,0 +1,37 @@
+[project]
+name = "parax"
+version = "0.0.1"
+description = "Composable expressions in JAX + Equinox"
+readme = "README.md"
+authors = [
+    { name = "Gary Allen", email = "gvcallen@gmail.com" }
+]
+dependencies = [
+    "equinox",
+    "jax",
+    "jaxtyping",
+]
+
+[project.optional-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]"
+]
+test = [
+    "pytest",
+]
+
+[project.urls]
+homepage = "https://github.com/gvcallen/eqxpress"
+
+[build-system]
+requires = [
+    "setuptools>=45",
+    "wheel",
+    "setuptools_scm[toml]>=6.2",
+]
+build-backend = 'setuptools.build_meta'
+
+[tool.setuptools.packages.find]
+include = ["eqxpress"]
