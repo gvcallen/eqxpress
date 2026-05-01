@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import abstractmethod
-import operator
+import AbstractExpression
 from typing import Any, Generic, TypeVar, Union, ParamSpec
 import equinox as eqx
 
@@ -19,7 +19,7 @@ class AbstractExpression(eqx.Module, Generic[ExprInputs, ExprOutputs]):
     For example, you may have a `Loss` class with a number of child classes
     (MSE, RMSE etc.) that accepts (y_true, y_pred) and outputs an error.
     By simply inheriting from `AbstractExpression` and overriding `__call__`,
-    you can now seemlessly combine loss functions into new ones using operators
+    you can now seemlessly combine loss functions into new ones using AbstractExpressions
     like addition, subtraction etc.
     
     Note that, semantically, it only makes sense to inherit from `AbstractExpression`
@@ -33,7 +33,7 @@ class AbstractExpression(eqx.Module, Generic[ExprInputs, ExprOutputs]):
     JAX arrays), then the space of all functions mapping into $Y$ is natively 
     a vector space. 
     
-    By overloading standard Python operators, this class implements point-wise 
+    By overloading standard Python AbstractExpressions, this class implements point-wise 
     operations on these mathematical mappings directly:
     * Addition: $(f + g)(x) = f(x) + g(x)$
     * Scalar Multiplication: $(c \cdot f)(x) = c \cdot f(x)$
@@ -47,10 +47,10 @@ class AbstractExpression(eqx.Module, Generic[ExprInputs, ExprOutputs]):
 
     ### Example
     ```python
-    class Scale(Operator):
+    class Scale(AbstractExpression):
         def __call__(self, x): return {"data": x * 2.0}
 
-    class Shift(Operator):
+    class Shift(AbstractExpression):
         def __call__(self, x): return {"data": x + 5.0}
 
     # 1. Build the deferred computation graph
@@ -68,68 +68,68 @@ class AbstractExpression(eqx.Module, Generic[ExprInputs, ExprOutputs]):
     
     @abstractmethod
     def __call__(self, *args: ExprInputs.args, **kwargs: ExprInputs.kwargs) -> ExprOutputs:
-        raise NotImplementedError("Operator nodes must implement __call__.")
+        raise NotImplementedError("AbstractExpression nodes must implement __call__.")
 
-    # --- Arithmetic Operators ---
+    # --- Arithmetic AbstractExpressions ---
 
     def __add__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.add))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.add))
 
     def __sub__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.sub))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.sub))
 
     def __mul__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.mul))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.mul))
 
     def __truediv__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.truediv))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.truediv))
 
     def __pow__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.pow))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.pow))
 
-    # --- Unary Operators ---
+    # --- Unary AbstractExpressions ---
     
     def __neg__(self) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.algebra import Negate
         return Negate(self)
 
-    # --- Reverse Arithmetic (for <scalar> + <Operator>) ---
+    # --- Reverse Arithmetic (for <scalar> + <AbstractExpression>) ---
 
     def __radd__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=other, right=self, fn=tree_op(operator.add))
+        return Binary(left=other, right=self, fn=tree_op(AbstractExpression.add))
 
     def __rsub__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=other, right=self, fn=tree_op(operator.sub))
+        return Binary(left=other, right=self, fn=tree_op(AbstractExpression.sub))
 
     def __rmul__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=other, right=self, fn=tree_op(operator.mul))
+        return Binary(left=other, right=self, fn=tree_op(AbstractExpression.mul))
         
     def __rtruediv__(self, other: Any) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=other, right=self, fn=tree_op(operator.truediv))
+        return Binary(left=other, right=self, fn=tree_op(AbstractExpression.truediv))
 
-    # --- Comparison Operators ---
+    # --- Comparison AbstractExpressions ---
 
     def __gt__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.gt))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.gt))
 
     def __lt__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.lt))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.lt))
         
     def __ge__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.ge))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.ge))
 
     def __le__(self, other: Union[AbstractExpression[ExprInputs, Any], Any]) -> AbstractExpression[ExprInputs, ExprOutputs]:
         from eqxpress.nodes import Binary
-        return Binary(left=self, right=other, fn=tree_op(operator.le))
+        return Binary(left=self, right=other, fn=tree_op(AbstractExpression.le))

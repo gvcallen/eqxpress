@@ -15,6 +15,7 @@ dependencies = [
 [project.optional-dependencies]
 docs = [
     "mkdocs",
+    "mkdocs-macros-plugin",
     "mkdocs-material",
     "mkdocstrings[python]"
 ]

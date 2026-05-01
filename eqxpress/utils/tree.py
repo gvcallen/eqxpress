@@ -1,7 +1,7 @@
 import jax
 
 def tree_op(op_fn):
-    """Wraps an operator to intelligently map across PyTrees and broadcast scalars."""
+    """Wraps an AbstractExpression to intelligently map across PyTrees and broadcast scalars."""
     def wrapped(*args):
         if len(args) == 1:
             # Unary operations (e.g., -op)
@@ -27,6 +27,6 @@ def tree_op(op_fn):
                 # Both are trees (must have matching structures) or both are scalars
                 return jax.tree_util.tree_map(op_fn, left, right)
         else:
-            raise ValueError("Only unary and binary operators are supported.")
+            raise ValueError("Only unary and binary AbstractExpressions are supported.")
             
     return wrapped

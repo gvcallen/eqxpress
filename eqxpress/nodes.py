@@ -1,9 +1,10 @@
 """
-Core operators.
+Core leave and brach nodes for basic operations.
+
+Exported at root.
 """
 
 from __future__ import annotations
-import operator
 from typing import Callable, Any, Union
 
 import jax
@@ -13,7 +14,7 @@ from eqxpress import AbstractExpression, ExprInputs, ExprOutputs
 
 class Lambda(AbstractExpression[ExprInputs, ExprOutputs]):
     """
-    Wraps a standard Python or JAX callable with the same domain as the operator.
+    Wraps a standard Python or JAX callable with the same domain as the AbstractExpression.
     """
     fn: Callable[ExprInputs, ExprOutputs]
 
@@ -33,7 +34,7 @@ class Constant(AbstractExpression[ExprInputs, ExprOutputs]):
 
 class Binary(AbstractExpression[ExprInputs, ExprOutputs]):
     """
-    Returns the result of a callable that accepts the result of two operators.
+    Returns the result of a callable that accepts the result of two AbstractExpressions.
     
     The functional callable ``fn`` must have the signature ``f(left, right)``.
     """
@@ -51,7 +52,7 @@ class Where(AbstractExpression[ExprInputs, ExprOutputs]):
     """
     A conditional branching node using `jax.lax.cond`.
 
-    Evaluates a boolean condition (from an Operator) and returns the output
+    Evaluates a boolean condition (from an AbstractExpression) and returns the output
     of either `true_branch` or `false_branch` depending on the condition.
     """
     condition: Union[AbstractExpression[ExprInputs, Any], Any]
@@ -78,22 +79,22 @@ class Method(AbstractExpression[ExprInputs, ExprOutputs]):
 
     def __call__(self, *args: ExprInputs.args, **kwargs: ExprInputs.kwargs) -> ExprOutputs:
         if not args:
-            raise ValueError(f"Method operator '{self.path}' requires at least one positional argument.")
+            raise ValueError(f"Method AbstractExpression '{self.path}' requires at least one positional argument.")
             
         obj = args[0] 
         method_args = args[1:]
         
-        func = operator.attrgetter(self.path)(obj)
+        func = AbstractExpression.attrgetter(self.path)(obj)
         return func(*method_args, **kwargs)
 
 
 class Map(AbstractExpression[ExprInputs, ExprOutputs]):
     """
-    Applies an arbitrary function to a single operator's output.
+    Applies an arbitrary function to a single AbstractExpression's output.
     """
     fn: Callable[[Any], ExprOutputs]
-    operator: Union[AbstractExpression[ExprInputs, Any], Any]
+    AbstractExpression: Union[AbstractExpression[ExprInputs, Any], Any]
 
     def __call__(self, *args: ExprInputs.args, **kwargs: ExprInputs.kwargs) -> ExprOutputs:
-        val = self.operator(*args, **kwargs) if isinstance(self.operator, AbstractExpression) else self.operator
+        val = self.AbstractExpression(*args, **kwargs) if isinstance(self.AbstractExpression, AbstractExpression) else self.AbstractExpression
         return self.fn(val)
