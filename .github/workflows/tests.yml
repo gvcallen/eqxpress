@@ -1,4 +1,4 @@
-name: Parax Tests
+name: eqxpress Tests
 
 # Run this workflow on all pushes and pull requests to the main branch
 on:

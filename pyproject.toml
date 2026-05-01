@@ -1,5 +1,5 @@
 [project]
-name = "parax"
+name = "eqxpress"
 version = "0.0.2"
 description = "Composable expressions in JAX + Equinox"
 readme = "README.md"

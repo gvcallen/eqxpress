@@ -1,5 +1,5 @@
-site_name: parax
-repo_url: https://github.com/parax/parax
+site_name: eqxpress
+repo_url: https://github.com/eqxpress/eqxpress
 
 theme:
   name: material

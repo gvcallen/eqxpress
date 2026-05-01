@@ -3,7 +3,7 @@
 | **eqxpress** |  |
 |-------------|-------|
 | **Author**  | Gary Allen |
-| **Homepage** | [github.com/parax/eqxpress](https://github.com/eqxpress/eqxpress) |
+| **Homepage** | [github.com/eqxpress/eqxpress](https://github.com/eqxpress/eqxpress) |
 
 ## Installation
 `eqxpress` can be installed via `pip`.
