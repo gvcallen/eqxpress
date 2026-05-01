@@ -14,17 +14,18 @@ class AbstractExpression(eqx.Module, Generic[ExprInputs, ExprOutputs]):
     A composable callable for building delayed computation graphs over PyTrees.
     
     ### Overview
-    This class is useful when you want to easily combine mappings over the
-    same input/output space. For example, you may have a `Loss` class
-    with a number of child classes (MSE, RMSE etc.) that accepts (y_true, y_pred)
-    and outputs an error. By simply inheriting from `prx.Operator`,
-    you can now combine loss functions into a new loss function using
-    addition, subtraction etc.
+    This class allows easily combining mappings over the same input/output space.
     
-    Semantically, it makes sense to inherit from `prx.Operator`
-    if operators on your input space reflection the same operators
+    For example, you may have a `Loss` class with a number of child classes
+    (MSE, RMSE etc.) that accepts (y_true, y_pred) and outputs an error.
+    By simply inheriting from `AbstractExpression` and overriding `__call__`,
+    you can now seemlessly combine loss functions into new ones using operators
+    like addition, subtraction etc.
+    
+    Note that, semantically, it only makes sense to inherit from `AbstractExpression`
+    if operations on your expression space are semantically the same as operations
     on your output space. For the above example, since "adding loss functions"
-    equivalently means "adding loss values", the "Operator" semantics hold.
+    is semantically the same as "adding loss values", this is an applicable example.
 
     ### Mathematical Formulation
     This class constructs an algebra over a field for the space of mappings 
